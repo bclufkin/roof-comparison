@@ -386,7 +386,7 @@ const C = [
     id: "augustine", name: "Augustine", status: "active",
     cred: "GAF ME + Presidents Club ✓", credBadge: "bg-gold",
     warns: [],
-    financing: "No deposit · No CC fee · GreenSky financing available (terms TBD · 0% SAC pending) · $150 veteran/first responder/law enforcement discount ✓",
+    financing: "No deposit · No CC fee · GreenSky: 24mo deferred interest (Plan 4248) best option · adds fee to base price · NO true SAC · $150 veteran/first responder discount ✓ · financed total for full config pending Johnny",
     warranty: { premium: "30yr Golden Pledge", standard: "25yr Golden Pledge" },
     wtyClass: { premium: "wty-great", standard: "wty-great" },
     specs: {
@@ -414,7 +414,9 @@ const C = [
     flagsFn: (sel,calc) => {
       const f=[];
       f.push('<span class="f-good">✓ Presidents Club ✓ · No deposit/CC fee · QC inspection · 30yr Golden Pledge on UHDZ</span>');
-      f.push('<span class="f-good">✓ $150 veteran/first responder discount · GreenSky financing available (0% SAC option pending)</span>');
+      f.push('<span class="f-good">✓ $150 veteran/first responder discount · No deposit · No CC fee ✓</span>');
+      f.push('<span class="f-warn">⚠ No true 0% SAC financing — GreenSky deferred interest adds fee to base · best to pay cash or use outside 0% card</span>');
+      f.push('<span class="f-warn">⚠ Financed total for full config pending Johnny response</span>');
       if(sel.epdm==='tpo') f.push('<span class="f-good">✓ TPO at same price as EPDM ($7,200) — best value TPO of all contractors ★</span>');
       if(sel.vents==='intake') f.push('<span class="f-good">✓ IntakePro $2,885 already priced for unvented sections · I&W below+above confirmed ✓</span>');
       if(sel.vents==='intake') f.push('<span class="f-warn">⚠ IntakePro $2,885 + $330 gable = $3,215 total vs Shane $2,109 all-in</span>');
@@ -458,7 +460,7 @@ const C = [
       f.push('<span class="f-good">✓ Presidents Club ✓ · "Purposely done to hide" — best legal evidence</span>');
       f.push('<span class="f-good">✓ $250 contractor veteran discount (all tiers) · $250 GAF mail-in rebate (HDZ only) = up to $500 total</span>');
       f.push('<span class="f-warn">⚠ GAF $250 rebate applies to HDZ only — not UHDZ · switching to HDZ loses 30yr wty + Class 4</span>');
-      f.push('<span class="f-warn">⚠ No true 0% SAC financing — 12/18mo deferred interest only · cash always cheaper · best to pay cash/check</span>');
+      f.push('<span class="f-warn">⚠ No true 0% SAC — 12/18mo deferred interest only · cash always cheaper · use outside 0% card if financing needed</span>');
       f.push('<span class="f-warn">⚠ Arbitration clause — WV venue if dispute (Sections 23-24)</span>');
       f.push('<span class="f-warn">⚠ Chimney: "where applicable" language — confirm reglet for this chimney</span>');
       f.push('<span class="f-warn">⚠ Smart fan + pipe upgrades in emails only — need written change order if selected</span>');
@@ -495,7 +497,7 @@ const C = [
       bathvents:(v,s) => v==='replace'?{cost:0,note:"Lifetime Tool bath vents incl."}:{cost:0,note:"⚠ Skip not recommended — workmanship wty won't cover these areas"},
       epdm:     (v,s) => ({skip:{cost:0,note:"Optional — no effect on shingle wty"},epdm:{cost:5575,note:"+$5,575 Mule Hide .060 EPDM"},tpo:{na:true,reason:"TPO not offered — EPDM only ($5,575)",fallback:5575,fallbackNote:"+$5,575 Mule Hide .060 EPDM (TPO N/A)"}})[v],
       fan:      (v,s) => ({none:{cost:0},remove:{cost:0,note:"Fan removal + wire cap incl."},replace:{cost:450,note:"+$450 AirVent PC12 w/ thermostat/humidistat (cheapest smart fan of all) · requires 562 sq in intake — check vs eave vent coverage"}})[v],
-      gable:    (v,s) => v==='yes'?{cost:0,note:"Gable blocking incl. in eave vent price ($1,365) · ⚠ Inaccessible gable: Angela said cinder block already seals it — but gable vent still open to exterior — may still need addressing"}:{cost:0},
+      gable:    (v,s) => v==='yes'?{cost:0,note:"Gable blocking incl. in eave vent price ($1,365) · Inaccessible gable: Angela will inspect on-site and close at NO extra charge if airflow confirmed ✓"}:{cost:0},
       vents:    (v,s) => v==='none'?{cost:0}:{cost:1365,note:"+$1,365 CertainTeed Eave Vent · 100 LF front+rear eaves (diagram provided) · I&W below+above confirmed ✓ · gable blocking INCL. ✓"},
       gutters:  (v,s) => ({none:{cost:0},basic:{na:true,reason:"Bulldog N/A",fallback:1110,fallbackNote:"+$1,110 Xtreme (Bulldog not offered)"},premium:{cost:1110,note:"+$1,110 Xtreme micro-mesh"}})[v],
       overlay:  (v,s) => v==='no'?{cost:0,note:"Recommended but NOT required per Ricardo · warranty risk if gaps found during claim"}:{cost:5639,note:"+$5,639 OSB overlay (or +$6,613 CDX) · permit + H-clips incl."},
@@ -563,7 +565,7 @@ const C = [
     id: "shane", name: "Shane / Roofing & More", status: "active",
     cred: "GAF ME only (Presidents Club NOT confirmed ⚠)", credBadge: "bg-red",
     warns: ["Displaying unearned Presidents Club credential"],
-    financing: "1/3 deposit (cash) · NO deposit if financing · EnerBank: 12mo SAC ✓ true 0% (DAC2725) · 5yr@6.99% · 10yr@9.99% · apply: application.enerbank.com",
+    financing: "1/3 deposit (cash) · NO deposit if financing · EnerBank 12mo SAC ✓ true 0% · 5yr@6.99% · 10yr@9.99% · Veteran discount: pending Shane response",
     warranty: { premium: "25yr Golden Pledge", standard: "25yr Golden Pledge" },
     wtyClass: { premium: "wty-great", standard: "wty-great" },
     specs: {
@@ -715,7 +717,7 @@ const C = [
     id: "marshall", name: "Marshall Roofing", status: "active",
     cred: "CT ShingleMaster PREMIER · 6× Angi SSA · Top Checkbook 20yr · 4.9★/778", credBadge: "bg-blue",
     warns: ["Landmark PRO free upgrade incl. (extended to end of month · $325 after that)"],
-    financing: "NO deposit · 18mo SAC true 0% (Wells Fargo) · 3% CC fee waived for cash/check · $300 veteran discount ✓ · Gutter Helmet detach/reset: $800 extra (Kenny)",
+    financing: "NO deposit · 18mo SAC ✓ true 0% (Wells Fargo) · 3% CC fee waived cash/check · $300 veteran discount ✓ (on top of Landmark PRO free upgrade) · Gutter Helmet detach/reset: $800 (Kenny)",
     warranty: { premium: "10yr workmanship + 3-Star SureStart Plus (Landmark PRO incl. free)", standard: "10yr workmanship + 3-Star SureStart Plus" },
     wtyClass: { premium: "wty-ok", standard: "wty-ok" },
     specs: {
