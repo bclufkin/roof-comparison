@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roof Comparison — 6225 Cheryl Drive</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; font-size: 13px; }
+
+.header { background: #1a1a2e; color: white; padding: 18px 24px 14px; }
+.header h1 { font-size: 17px; font-weight: 700; }
+.header p { font-size: 11px; color: #8899bb; margin-top: 3px; }
+
+.config { background: white; border-bottom: 2px solid #e2e6ea; padding: 16px 24px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+.config-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #556; margin-bottom: 14px; }
+.config-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 20px; }
+.opt-group { display: flex; flex-direction: column; gap: 5px; }
+.opt-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #445; }
+.opt-desc { font-size: 9.5px; color: #889; margin-top: -3px; }
+.pill-group { display: flex; flex-wrap: wrap; gap: 5px; }
+.pill-group input[type=radio] { display: none; }
+.pill-group label { display: inline-block; padding: 4px 10px; border: 1.5px solid #d0d7de; border-radius: 20px; font-size: 11px; cursor: pointer; color: #445; transition: all 0.15s; white-space: nowrap; }
+.pill-group input[type=radio]:checked + label { background: #1a1a2e; border-color: #1a1a2e; color: white; }
+.pill-group input[type=radio]:disabled + label { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+
+.logic-note { margin: 8px 24px 0; padding: 8px 14px; background: #fff8e1; border-left: 3px solid #f59e0b; font-size: 11px; color: #7c4f00; border-radius: 0 6px 6px 0; display: none; line-height: 1.6; }
+.logic-note.visible { display: block; }
+
+.rec-bar { margin: 14px 24px 0; padding: 12px 16px; border-radius: 8px; background: #f0fdf4; border: 1.5px solid #10b981; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.rec-label { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #065f46; white-space: nowrap; }
+.rec-name { font-size: 15px; font-weight: 800; color: #065f46; }
+.rec-reason { font-size: 11px; color: #047857; flex: 1; min-width: 180px; }
+
+.scroll { overflow-x: auto; padding: 14px 24px 30px; }
+table { border-collapse: collapse; width: 100%; min-width: 1500px; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.09); }
+thead tr { background: #1a1a2e; }
+th { padding: 9px 7px; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; color: #ccd; white-space: nowrap; }
+th.right { text-align: right; }
+th.sub { background: #252545; }
+
+tbody tr { border-bottom: 1px solid #f0f2f5; background: white; transition: background 0.1s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr.winner { background: #f0fdf4; }
+tbody tr.second { background: #f8faff; }
+tbody tr.pending-row { background: #fffbf0; }
+tbody tr.muted-row { background: #f8f8f8; opacity: 0.65; }
+tbody tr.eliminated-row { background: #f5f5f5; opacity: 0.4; }
+
+td { padding: 9px 7px; vertical-align: top; font-size: 10px; }
+
+.rank-badge { display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 50%; font-size: 9px; font-weight: 800; margin-right: 4px; flex-shrink: 0; }
+.rank-1 { background: #10b981; color: white; }
+.rank-2 { background: #3b82f6; color: white; }
+.rank-3 { background: #8b5cf6; color: white; }
+.rank-n { background: #e5e7eb; color: #6b7280; }
+
+.cname { font-weight: 700; font-size: 12px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.csub { font-size: 9px; color: #778; margin-top: 2px; line-height: 1.4; }
+.cwarn { font-size: 9px; color: #dc2626; font-weight: 600; margin-top: 1px; }
+
+.badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; white-space: nowrap; }
+.bg-gold { background: #fef3c7; color: #92400e; }
+.bg-green { background: #d1fae5; color: #065f46; }
+.bg-blue { background: #dbeafe; color: #1e40af; }
+.bg-gray { background: #f3f4f6; color: #374151; }
+.bg-red { background: #fee2e2; color: #991b1b; }
+.bg-winner { background: #10b981; color: white; }
+.bg-elim { background: #e5e7eb; color: #9ca3af; }
+
+.price-cell { text-align: right; min-width: 130px; }
+.price-big { font-size: 16px; font-weight: 800; }
+.price-big.green { color: #059669; }
+.price-big.blue { color: #2563eb; }
+.price-muted { font-size: 13px; font-weight: 700; color: #aab; }
+.price-na-label { font-size: 9.5px; color: #ef4444; font-weight: 600; }
+.price-pending-label { font-size: 9.5px; color: #d97706; font-style: italic; }
+.price-detail { font-size: 9px; color: #889; margin-top: 3px; line-height: 1.6; }
+.price-warning { font-size: 9px; color: #dc2626; margin-top: 3px; line-height: 1.5; }
+.price-note { font-size: 9px; color: #d97706; margin-top: 2px; font-style: italic; }
+
+.wty { font-size: 10px; font-weight: 600; }
+.wty-great { color: #059669; }
+.wty-ok { color: #d97706; }
+.wty-low { color: #dc2626; }
+
+.spec-cell { font-size: 9.5px; line-height: 1.65; color: #334; }
+.s-inc { color: #059669; }
+.s-warn { color: #d97706; }
+.s-bad { color: #dc2626; }
+.s-tbd { color: #6366f1; font-style: italic; }
+.s-na { color: #bbb; }
+
+.flags-cell { font-size: 9.5px; line-height: 1.7; }
+.f-good { color: #059669; }
+.f-warn { color: #d97706; }
+.f-bad { color: #dc2626; }
+
+.fin-cell { font-size: 9px; color: #445; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Roof Contractor Comparison — 6225 Cheryl Drive</h1>
+  <p>Configure your specs below. Incompatible combinations are auto-locked. Contractors sorted by recommendation score.</p>
+  <p style="margin-top:6px;font-size:10.5px;color:#ffcc88">⚠ Outstanding for remaining contractors: (1) Intake vent I&W spec — installed BELOW and ABOVE the intake vent, or just below? (2) Inaccessible gable (cinder block wall) — how would they handle it? (Augustine: $165/each from roof ✓ · Shane: outside coil metal ✓ · Pond: exterior closing ✓)</p>
+</div>
+
+<div class="config">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
+    <div class="config-title" style="margin-bottom:0">Your Specifications</div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:10px;background:#f8f9fa;padding:6px 12px;border-radius:20px;border:1.5px solid #d0d7de;">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#445">Payment:</span>
+        <div class="pill-group" style="margin:0">
+          <input type="radio" name="payment" id="pay-cash" value="cash" checked onchange="update()">
+          <label for="pay-cash" style="font-size:10.5px;padding:3px 10px">Cash / Check</label>
+          <input type="radio" name="payment" id="pay-finance" value="finance" onchange="update()">
+          <label for="pay-finance" style="font-size:10.5px;padding:3px 10px">Financed</label>
+        </div>
+        <span id="finance-note" style="font-size:9.5px;color:#d97706;display:none">⚠ Confirmed finance rates: AHC (1.25x) · Shane (1.188x). Others show cash price.</span>
+      </div>
+      <button onclick="resetDefaults()" style="padding:6px 14px;border:1.5px solid #1a1a2e;border-radius:20px;background:#1a1a2e;color:white;font-size:10.5px;font-weight:700;cursor:pointer;letter-spacing:0.03em;">↺ Reset to Defaults</button>
+    </div>
+  </div>
+  <div class="config-grid">
+
+    <div class="opt-group">
+      <div class="opt-label">Shingle Tier</div>
+      <div class="pill-group">
+        <input type="radio" name="shingle" id="sh-premium" value="premium" checked onchange="update()">
+        <label for="sh-premium">Premium (UHDZ/CT Pro)</label>
+        <input type="radio" name="shingle" id="sh-standard" value="standard" onchange="update()">
+        <label for="sh-standard">Standard (HDZ/CT Landmark)</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Chimney Flashing</div>
+      <div class="pill-group">
+        <input type="radio" name="chimney" id="ch-reglet" value="reglet" checked onchange="update()">
+        <label for="ch-reglet">Reglet (best)</label>
+        <input type="radio" name="chimney" id="ch-surface" value="surface" onchange="update()">
+        <label for="ch-surface">Surface-applied</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Pipe Boots</div>
+      <div class="pill-group">
+        <input type="radio" name="boots" id="bt-lifetime" value="lifetime" checked onchange="update()">
+        <label for="bt-lifetime">Lifetime boots + I&W</label>
+        <input type="radio" name="boots" id="bt-standard" value="standard" onchange="update()">
+        <label for="bt-standard">Standard rubber collars</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Bath Vents</div>
+      <div class="pill-group">
+        <input type="radio" name="bathvents" id="bv-replace" value="replace" checked onchange="update()">
+        <label for="bv-replace">Replace all vents</label>
+        <input type="radio" name="bathvents" id="bv-skip" value="skip" onchange="update()">
+        <label for="bv-skip">Leave as-is</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Flat Roof</div>
+      <div class="pill-group">
+        <input type="radio" name="epdm" id="ep-skip" value="skip" onchange="update()">
+        <label for="ep-skip">Defer / tie-in</label>
+        <input type="radio" name="epdm" id="ep-epdm" value="epdm" onchange="update()">
+        <label for="ep-epdm">Replace (EPDM/Flintlastic)</label>
+        <input type="radio" name="epdm" id="ep-tpo" value="tpo" checked onchange="update()">
+        <label for="ep-tpo">Replace (TPO) ★ Rec.</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Exhaust Fan</div>
+      <div class="opt-desc">Current fan: stalled motor, fire hazard</div>
+      <div class="pill-group">
+        <input type="radio" name="fan" id="fn-remove" value="remove" checked onchange="update()">
+        <label for="fn-remove">Remove + close</label>
+        <input type="radio" name="fan" id="fn-replace" value="replace" onchange="update()">
+        <label for="fn-replace">Replace w/ smart fan</label>
+        <input type="radio" name="fan" id="fn-none" value="none" onchange="update()">
+        <label for="fn-none">Leave as-is</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Gable Vent Blocking</div>
+      <div class="opt-desc" id="gable-desc">Required if adding intake vents. If blocking gables, fan must be replaced or removed.</div>
+      <div class="pill-group">
+        <input type="radio" name="gable" id="gb-no" value="no" onchange="update()">
+        <label for="gb-no">Leave open</label>
+        <input type="radio" name="gable" id="gb-yes" value="yes" checked onchange="update()">
+        <label for="gb-yes">Block gables</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Intake Ventilation</div>
+      <div class="opt-desc">Requires gable blocking + fan removal/replacement</div>
+      <div class="pill-group">
+        <input type="radio" name="vents" id="vt-none" value="none" onchange="update()">
+        <label for="vt-none">None (passive)</label>
+        <input type="radio" name="vents" id="vt-intake" value="intake" checked onchange="update()">
+        <label for="vt-intake">Add soffit/eave vents</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Gutter Screens</div>
+      <div class="pill-group">
+        <input type="radio" name="gutters" id="gt-none" value="none" onchange="update()">
+        <label for="gt-none">None</label>
+        <input type="radio" name="gutters" id="gt-basic" value="basic" onchange="update()">
+        <label for="gt-basic">Basic (Bulldog)</label>
+        <input type="radio" name="gutters" id="gt-premium" value="premium" checked onchange="update()">
+        <label for="gt-premium">Premium (Xtreme/Leaf Relief)</label>
+      </div>
+    </div>
+
+    <div class="opt-group">
+      <div class="opt-label">Plywood Overlay</div>
+      <div class="opt-desc">5 of 7 contractors say not required; Banning recommends</div>
+      <div class="pill-group">
+        <input type="radio" name="overlay" id="ov-no" value="no" checked onchange="update()">
+        <label for="ov-no">No overlay</label>
+        <input type="radio" name="overlay" id="ov-yes" value="yes" onchange="update()">
+        <label for="ov-yes">Add overlay</label>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="logic-note" class="logic-note"></div>
+
+<div class="rec-bar">
+  <div>
+    <div class="rec-label">★ Recommendation</div>
+    <div class="rec-name" id="rec-name">—</div>
+  </div>
+  <div class="rec-reason" id="rec-reason">Loading...</div>
+</div>
+
+<div class="scroll">
+<table>
+<thead>
+  <tr>
+    <th style="min-width:150px">Contractor</th>
+    <th class="right" style="min-width:145px">Your Price</th>
+    <th style="min-width:85px">Warranty</th>
+    <th class="sub" style="min-width:70px">Pipe Boots</th>
+    <th class="sub" style="min-width:65px">Bath Vents</th>
+    <th class="sub" style="min-width:70px">I&W Shield</th>
+    <th class="sub" style="min-width:65px">Drip Edge</th>
+    <th class="sub" style="min-width:70px">Ridge Vent</th>
+    <th class="sub" style="min-width:65px">Underlayment</th>
+    <th class="sub" style="min-width:65px">Board Repair</th>
+    <th class="sub" style="min-width:70px">Flat Roof</th>
+    <th style="min-width:130px">Financing</th>
+    <th style="min-width:165px">Flags / Notes</th>
+  </tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<script>
+// ─── RESET DEFAULTS ──────────────────────────────────────────────────────────
+function resetDefaults() {
+  document.getElementById('sh-premium').checked = true;
+  document.getElementById('ch-reglet').checked = true;
+  document.getElementById('bt-lifetime').checked = true;
+  document.getElementById('bv-replace').checked = true;
+  document.getElementById('ep-tpo').checked = true;
+  document.getElementById('fn-remove').checked = true;
+  document.getElementById('gb-yes').checked = true;
+  document.getElementById('vt-intake').checked = true;
+  document.getElementById('gt-premium').checked = true;
+  document.getElementById('ov-no').checked = true;
+  document.getElementById('pay-cash').checked = true;
+  update();
+}
+
+// ─── VENTILATION LOGIC ──────────────────────────────────────────────────────
+function enforceLogic() {
+  const vents = document.querySelector('input[name=vents]:checked').value;
+  const fan   = document.querySelector('input[name=fan]:checked').value;
+  const gable = document.querySelector('input[name=gable]:checked').value;
+
+  const elFanNone    = document.getElementById('fn-none');
+  const elFanRemove  = document.getElementById('fn-remove');
+  const elGableNo    = document.getElementById('gb-no');
+  const elGableYes   = document.getElementById('gb-yes');
+  const elVentNone   = document.getElementById('vt-none');
+  const elVentIntake = document.getElementById('vt-intake');
+
+  [elFanNone, elFanRemove, elGableNo, elGableYes, elVentNone, elVentIntake].forEach(e => e.disabled = false);
+
+  const notes = [];
+
+  if (vents === 'intake') {
+    elGableYes.checked = true;
+    elGableNo.disabled = true;
+    elFanNone.disabled = true;
+    if (fan === 'none') { elFanRemove.checked = true; }
+    notes.push('Intake vents require gable blocking (auto-selected) and fan removal or replacement.');
+  }
+
+  if (document.querySelector('input[name=gable]:checked').value === 'yes') {
+    elFanNone.disabled = true;
+    if (fan === 'none') { elFanRemove.checked = true; notes.push('Fan cannot be left as-is with gables blocked — switched to Remove + close.'); }
+  }
+
+  const gableNow = document.querySelector('input[name=gable]:checked').value;
+  const fanNow   = document.querySelector('input[name=fan]:checked').value;
+  const ventsNow = document.querySelector('input[name=vents]:checked').value;
+  if (gableNow === 'yes' && fanNow === 'remove' && ventsNow === 'none') {
+    elVentIntake.checked = true;
+    notes.push('Blocking gables + removing fan with no intake vents leaves no air path into the attic. Intake vents auto-selected.');
+  }
+
+  const logicNote = document.getElementById('logic-note');
+  if (notes.length) {
+    logicNote.innerHTML = '⚠ ' + notes.join(' ');
+    logicNote.classList.add('visible');
+  } else {
+    logicNote.classList.remove('visible');
+  }
+}
+
+// ─── FINANCING ────────────────────────────────────────────────────────────────
+const FINANCE_RATES = {
+  ahc: 1.25,         // 60mo @6.99%: $16,580 cash → $20,725 financed · deferred interest: ~1.08x (UHDZ $16,580→$17,916) · no true SAC
+  augustine: null,   // no financing offered — cash/check only
+  banning: null,     // 2% CC fee only, no installment plan confirmed
+  exteriormedics: null,
+  shane: 1.188,      // confirmed: 60mo @6.99%
+  nova: null,
+  pond: null,
+  mancia: null,
+  marshall: null,
+  atlas: null,
+};
+
+// ─── SCORING ──────────────────────────────────────────────────────────────────
+function scoreContractor(c, calc, sel, lowestPrice) {
+  if (calc.type !== 'price') return 9999;
+  if (c.status === 'eliminated') return 9998;
+
+  let score = 0;
+  const priceGap = calc.total - lowestPrice;
+  score += Math.min(50, (priceGap / 1000) * 5);
+
+  if (c.id === 'shane') score += 15;
+  if (c.id === 'mancia') score += 40;
+  if (c.id === 'atlas' || c.id === 'pond') score += 30;
+  if (c.id === 'nova') score += 12;
+  if (c.id === 'exteriormedics') score += 8;
+  if (c.id === 'marshall') score += 5;
+
+  const wty = c.warranty[sel.shingle] || '';
+  if (wty.includes('15yr') || wty.includes('10yr')) score += 10;
+  if (wty.includes('N/A') || wty.includes('None') || wty.includes('TBD')) score += 5;
+
+  if (calc.naItems && calc.naItems.length > 0) score += calc.naItems.length * 3;
+
+  if (c.id === 'augustine' || c.id === 'ahc') score -= 5;
+  if (c.id === 'augustine') score -= 3;
+
+  if (c.status === 'pending') return 500 + score;
+
+  return score;
+}
+
+// ─── CONTRACTOR DATA ──────────────────────────────────────────────────────────
+const C = [
+  {
+    id: "augustine", name: "Augustine", status: "active",
+    cred: "GAF ME + Presidents Club ✓", credBadge: "bg-gold",
+    warns: [],
+    financing: "No deposit · No CC fee · GreenSky financing available (terms TBD · 0% SAC pending) · $150 veteran/first responder/law enforcement discount ✓",
+    warranty: { premium: "30yr Golden Pledge", standard: "25yr Golden Pledge" },
+    wtyClass: { premium: "wty-great", standard: "wty-great" },
+    specs: {
+      drip: "Aluminum, all eaves + rakes per VA code",
+      boots: { lifetime: "GAF Master Flow Pivot + I&W under boot, every 24\" from warm wall (code req.) ✓", standard: "Aluminum collars (standard, non-lifetime)" },
+      bathvents: { replace: "All vents replaced ✓", skip: "Not included" },
+      ridgevent: "Cobra Snow Country Advanced + Seal-A-Ridge",
+      iw: "WeatherWatch at eaves, valleys, pipes, chimneys · 2ft past warm wall (code req.)",
+      underlayment: "GAF Feltbuster synthetic",
+      boardrepair: "$12/LF 1x boards · $70/sheet CDX (lowest rate)",
+      flatroof: "EPDM +$7,200 · TPO +$7,200 (same price!) ★ best TPO value of all contractors ✓",
+    },
+    base: { premium: 12850, standard: 12500 },
+    options: {
+      chimney: (v,s) => v==='reglet'?{cost:150,note:"+$150 reglet labor"}:{cost:0},
+      boots:   (v,s) => v==='lifetime'?{cost:0,note:"GAF Master Flow Pivot incl."}:{cost:0,note:"Aluminum collars (standard)"},
+      bathvents:(v,s)=> v==='replace'?{cost:0,note:"All vents replaced incl."}:{cost:0},
+      epdm:    (v,s) => ({skip:{cost:0}, epdm:{cost:7200,note:"+$7,200 EPDM+ISO+taper"}, tpo:{cost:7200,note:"+$7,200 TPO (same price as EPDM) ★ better for VA climate + tree coverage ✓"}})[v],
+      fan:     (v,s) => ({none:{cost:0},remove:{cost:70,note:"+$70 fan removal+plywood"},replace:{cost:545,note:"+$545 GAF smart fan+removal"}})[v],
+      gable:   (v,s) => v==='yes'?{cost:330,note:"+$330 gable blocking (2×$165 · from roof during tear-off ✓ · solves inaccessible gable)"}:{cost:0},
+      vents:   (v,s) => v==='none'?{cost:0}:{cost:2885,note:"+$2,885 IntakePro (priced for unvented sections only ✓) · I&W below+above confirmed ✓"},
+      gutters: (v,s) => ({none:{cost:0},basic:{cost:1450,note:"+$1,450 Bulldog"},premium:{cost:2025,note:"+$2,025 Leaf Blaster Pro stainless steel micro-mesh ✓"}})[v],
+      overlay: (v,s) => v==='no'?{cost:0}:{na:true,reason:"Full overlay not standard scope — 1x damaged boards replaced at $12/LF"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-good">✓ Presidents Club ✓ · No deposit/CC fee · QC inspection · 30yr Golden Pledge on UHDZ</span>');
+      f.push('<span class="f-good">✓ $150 veteran/first responder discount · GreenSky financing available (0% SAC option pending)</span>');
+      if(sel.epdm==='tpo') f.push('<span class="f-good">✓ TPO at same price as EPDM ($7,200) — best value TPO of all contractors ★</span>');
+      if(sel.vents==='intake') f.push('<span class="f-good">✓ IntakePro $2,885 already priced for unvented sections · I&W below+above confirmed ✓</span>');
+      if(sel.vents==='intake') f.push('<span class="f-warn">⚠ IntakePro $2,885 + $330 gable = $3,215 total vs Shane $2,109 all-in</span>');
+      if(sel.gutters==='premium') f.push('<span class="f-good">✓ Leaf Blaster Pro stainless steel micro-mesh $2,025 ✓</span>');
+      if(sel.boots==='lifetime') f.push('<span class="f-good">✓ Master Flow Pivot + I&W confirmed · gable blocking from roof during tear-off ✓</span>');
+      f.push('<span class="f-good">✓ FULLY RESOLVED — all questions answered ✓</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "ahc", name: "AHC (American Home Contractors)", status: "active",
+    cred: "GAF ME + Presidents Club ✓", credBadge: "bg-gold",
+    warns: [],
+    financing: "$100 deposit · 20% cash/check discount applied · 3% CC fee · GreenSky: 60mo @6.99% OR 12/18mo deferred interest (NOT true 0% — cash always cheaper) · NO true SAC option available · $250 contractor veteran discount (all tiers) · $250 GAF mail-in rebate (HDZ only)",
+    warranty: { premium: "30yr Golden Pledge (GAF-backed) + Triple Lifetime", standard: "10yr Silver Pledge (GAF-backed) + Triple Lifetime" },
+    wtyClass: { premium: "wty-great", standard: "wty-ok" },
+    specs: {
+      drip: "4.5\" F-style full perimeter",
+      boots: { lifetime: "Lifetime collar upgrade: +$675 (3×$225) · GAF metal: +$810 (3×$270) · I&W under boot confirmed ✓", standard: "Double rubber collars · I&W under boot confirmed ✓ · Triple Lifetime wty" },
+      bathvents: { replace: "All 750 vents + bath vents ✓", skip: "Not replaced" },
+      ridgevent: "GAF Cobra Snow Country PVC",
+      iw: "GAF I&W at eaves, valleys, penetrations",
+      underlayment: "GAF Feltbuster synthetic",
+      boardrepair: "First 20LF incl. · $10/LF beyond · CDX $90/sheet",
+      flatroof: "Tie-in incl. · EPDM/TPO replace: $7,600–$9,600 ballpark (core test req. to finalize) · midpoint ~$8,600",
+    },
+    base: { premium: 16580, standard: 15700 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet into mortar joints (\"where applicable\" per contract — confirm for this chimney)"}),
+      boots:    (v,s) => v==='lifetime'?{cost:675,note:"+$675 lifetime collar upgrade (3 collars × $225)"}:{cost:0,note:"Standard rubber collars + I&W confirmed ✓"},
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"All bath vents incl."}:{cost:0},
+      epdm:     (v,s) => v==='skip'?{cost:0,note:"Tie-in incl. (assessed good condition)"} : v==='tpo'?{cost:8600,note:"+~$8,600 TPO ballpark ($7,600–$9,600 · core test req. to finalize)"} : {cost:8600,note:"+~$8,600 EPDM ballpark ($7,600–$9,600 · core test req. to finalize)"},
+      fan:      (v,s) => ({none:{cost:0},remove:{cost:0,note:"Fan removal incl."},replace:{cost:735,note:"+$735 power attic fan w/ humidistat+thermostat (financed: $920) · Solar: +$945"}})[v],
+      gable:    (v,s) => v==='yes'?{cost:120,note:"+$120 inaccessible gable (exterior plywood) — 2 accessible gables incl. free with edge vent scope"}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{cost:4160,note:"+$4,160 Lomanco DA-4 · ⚠ I&W only below (not above) per Alex — differs from Shane/Banning/Pond spec"},
+      gutters:  (v,s) => ({none:{cost:0},basic:{cost:1600,note:"+$1,600 Bulldog"},premium:{cost:1920,note:"+$1,920 Xtreme"}})[v],
+      overlay:  (v,s) => v==='no'?{cost:0}:{na:true,reason:"Full overlay not in scope — damaged boards at $10/LF beyond first 20LF"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-good">✓ Presidents Club ✓ · "Purposely done to hide" — best legal evidence</span>');
+      f.push('<span class="f-good">✓ $250 contractor veteran discount (all tiers) · $250 GAF mail-in rebate (HDZ only) = up to $500 total</span>');
+      f.push('<span class="f-warn">⚠ GAF $250 rebate applies to HDZ only — not UHDZ · switching to HDZ loses 30yr wty + Class 4</span>');
+      f.push('<span class="f-warn">⚠ No true 0% SAC financing — 12/18mo deferred interest only · cash always cheaper · best to pay cash/check</span>');
+      f.push('<span class="f-warn">⚠ Arbitration clause — WV venue if dispute (Sections 23-24)</span>');
+      f.push('<span class="f-warn">⚠ Chimney: "where applicable" language — confirm reglet for this chimney</span>');
+      f.push('<span class="f-warn">⚠ Smart fan + pipe upgrades in emails only — need written change order if selected</span>');
+      if(sel.epdm!=='skip') f.push('<span class="f-warn">⚠ EPDM/TPO: $7,600–$9,600 ballpark · core test req. to finalize · higher than Augustine/Banning/Shane fixed prices</span>');
+      if(sel.vents==='intake') f.push('<span class="f-warn">⚠ I&W only below intake vent (not above) per Alex — differs from Shane/Banning/Pond spec (both below+above)</span>');
+      if(sel.gable==='yes') f.push('<span class="f-good">✓ Inaccessible gable: exterior plywood close confirmed, +$120 standalone · 2 accessible gables incl. free</span>');
+      f.push('<span class="f-good">✓ FULLY RESOLVED — all questions answered ✓</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "banning", name: "R.M. Banning", status: "active",
+    cred: "CT ShingleMaster PREMIER since 2003", credBadge: "bg-blue",
+    warns: ["License expires 11/2026"],
+    financing: "1/3 deposit · 2% CC fee · Enhancify marketplace (30+ lenders) · 0% APR for 12-21mo likely for 850 credit score · no dealer fees/surcharges · soft pull only · 25% cancellation fee after 3 days",
+    warranty: { premium: "15yr wkmsn + SureStart Plus · $150 fee after 12mo · claims within 15 days", standard: "15yr wkmsn · $150 fee after 12mo · claims within 15 days" },
+    wtyClass: { premium: "wty-ok", standard: "wty-ok" },
+    specs: {
+      drip: "Aluminum F5 all eaves + rakes",
+      boots: { lifetime: "Lifetime Tool Ultimate ✓", standard: "Lifetime Tool Ultimate ✓" },
+      bathvents: { replace: "Lifetime Tool Ultimate bath/dryer vents ✓", skip: "Not recommended — workmanship wty won't cover these areas if not replaced" },
+      ridgevent: "CT ridge vent + Shadow Ridge",
+      iw: "CT WinterGuard at eaves + valleys",
+      underlayment: "CT RoofRunner polymer synthetic",
+      boardrepair: "$10/LF 1x6 · rake boards incl.",
+      flatroof: "EPDM +$5,575 Mule Hide .060 · TPO: N/A (not offered) · Permit incl. with overlay",
+    },
+    base: { premium: 16500, standard: 16075 },
+    veteranDiscount: 500,
+    overlayOptions: { osb: 5639, cdx: 6613 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet + kick-out standard"}),
+      boots:    (v,s) => ({cost:0,note:"Lifetime Tool Ultimate incl."}),
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"Lifetime Tool bath vents incl."}:{cost:0,note:"⚠ Skip not recommended — workmanship wty won't cover these areas"},
+      epdm:     (v,s) => ({skip:{cost:0,note:"Optional — no effect on shingle wty"},epdm:{cost:5575,note:"+$5,575 Mule Hide .060 EPDM"},tpo:{na:true,reason:"TPO not offered — EPDM only ($5,575)",fallback:5575,fallbackNote:"+$5,575 Mule Hide .060 EPDM (TPO N/A)"}})[v],
+      fan:      (v,s) => ({none:{cost:0},remove:{cost:0,note:"Fan removal + wire cap incl."},replace:{cost:450,note:"+$450 AirVent PC12 w/ thermostat/humidistat (cheapest smart fan of all) · requires 562 sq in intake — check vs eave vent coverage"}})[v],
+      gable:    (v,s) => v==='yes'?{cost:0,note:"Gable blocking incl. in eave vent price ($1,365) · ⚠ Inaccessible gable: Angela said cinder block already seals it — but gable vent still open to exterior — may still need addressing"}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{cost:1365,note:"+$1,365 CertainTeed Eave Vent · 100 LF front+rear eaves (diagram provided) · I&W below+above confirmed ✓ · gable blocking INCL. ✓"},
+      gutters:  (v,s) => ({none:{cost:0},basic:{na:true,reason:"Bulldog N/A",fallback:1110,fallbackNote:"+$1,110 Xtreme (Bulldog not offered)"},premium:{cost:1110,note:"+$1,110 Xtreme micro-mesh"}})[v],
+      overlay:  (v,s) => v==='no'?{cost:0,note:"Recommended but NOT required per Ricardo · warranty risk if gaps found during claim"}:{cost:5639,note:"+$5,639 OSB overlay (or +$6,613 CDX) · permit + H-clips incl."},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-warn">⚠ 15yr wty only · No Class 4 impact shingle</span>');
+      f.push('<span class="f-good">✓ $500 veteran/military discount confirmed ✓ · largest veteran discount of all contractors</span>');
+      f.push('<span class="f-good">✓ Enhancify financing: 0% APR 12-21mo likely available (850 credit) · no surcharges · soft pull only ✓</span>');
+      f.push('<span class="f-good">✓ Prices reduced significantly: Good $16,075 (was $18,075) · Better $16,500 (was $18,515)</span>');
+      f.push('<span class="f-good">✓ Eave vent intake cheapest of all: $1,365 incl. gable blocking</span>');
+      if(sel.overlay==='no') f.push('<span class="f-warn">⚠ Ricardo confirmed gaps >1/4" exist — overlay recommended · warranty risk if claim denied</span>');
+      if(sel.overlay==='yes') f.push('<span class="f-good">✓ OSB overlay +$5,639 · CDX overlay +$6,613 · permit + H-clips incl.</span>');
+      f.push('<span class="f-warn">⚠ License expires 11/2026 — confirm renewal</span>');
+      f.push('<span class="f-good">✓ Smart fan $450 — cheapest of all (AirVent PC12, 10yr wty + 5yr Replacement Plus)</span>');
+      f.push('<span class="f-warn">⚠ Inaccessible gable: Angela says cinder block already seals it — but gable vent still open to exterior, so likely still needs addressing</span>');
+      f.push('<span class="f-good">✓ Eave vent: 100 LF front+rear · I&W below+above ✓ · diagram provided</span>');
+      f.push('<span class="f-good">✓ Price drop explained: eave vent unbundled from base for transparency — same total either way ✓</span>');
+      f.push('<span class="f-good">✓ FULLY RESOLVED — all questions answered ✓</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "exteriormedics", name: "Exterior Medics", status: "active",
+    cred: "GAF Master Elite", credBadge: "bg-green",
+    warns: ["Xavier verbal unreliable — written scope governs"],
+    financing: "0% 18mo Synchrony · 3% CC fee · Permit extra",
+    warranty: { premium: "N/A — HDZ only", standard: "Lifetime wkmsn (transferable)" },
+    wtyClass: { premium: "wty-low", standard: "wty-great" },
+    specs: {
+      drip: "Aluminum F5\" all eaves + rakes",
+      boots: { lifetime: "Master Flow Pivot lifetime + I&W confirmed ✓", standard: "Master Flow Pivot (standard scope)" },
+      bathvents: { replace: "All bath vent caps replaced — NO extra cost confirmed ✓", skip: "Not replaced" },
+      ridgevent: "GAF Snow Country Advanced ✓",
+      iw: "WeatherWatch at all transitions + I&W at shingle-to-flat transition",
+      underlayment: "FeltBuster premium",
+      boardrepair: "CDX $110/sheet · FRT $152 · 1x $13.50/LF (highest rates)",
+      flatroof: "Tie-in + I&W at transition incl. · Full replacement: $7,800–$8,380 (range, not fixed) · midpoint ~$8,090 · TPO availability not confirmed",
+    },
+    base: { premium: null, standard: 18421 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet into mortar standard ✓"}),
+      boots:    (v,s) => ({cost:0,note:"Master Flow Pivot incl."}),
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"Bath vent caps incl. at no cost ✓"}:{cost:0},
+      epdm:     (v,s) => v==='skip'?{cost:0,note:"Tie-in + I&W at transition incl."} : v==='epdm'?{cost:8090,note:"+~$8,090 replacement ($7,800–$8,380 range) · higher than Augustine/Banning/Shane fixed prices"} : {na:true,reason:"TPO not confirmed by Xavier",fallback:8090,fallbackNote:"+~$8,090 (EPDM range, TPO availability unknown)"},
+      fan:      (v,s) => ({none:{cost:0,note:"Fan skip credit: pending Xavier response"},remove:{cost:0,note:"New fan incl. in scope"},replace:{cost:0,note:"New fan incl. — upgrade to smart fan: not quoted"}})[v],
+      gable:    (v,s) => v==='yes'?{cost:0,note:"Gable blocking incl."}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{na:true,reason:"Xavier says intake not appropriate for this home style — disputes other contractors' consensus · written explanation requested"},
+      gutters:  (v,s) => ({none:{cost:0}, basic:{na:true,reason:"Bulldog not offered",fallback:2908,fallbackNote:"+$2,908 Xtreme (Bulldog N/A — most expensive gutter option of all)"}, premium:{cost:2908,note:"+$2,908 Xtreme Guard (most expensive of all — Banning $1,110 · AHC $1,920 · Augustine $2,025)"}})[v],
+      overlay:  (v,s) => v==='no'?{cost:0}:{na:true,reason:"Full overlay not in scope — damaged areas only at $110/sheet CDX (highest rate)"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      if(sel.shingle==='premium') f.push('<span class="f-bad">✗ UHDZ not available — HDZ only · price shown is HDZ</span>');
+      if(sel.vents==='intake') f.push('<span class="f-bad">⚠ Xavier says intake vents not appropriate for this home — contradicts all other contractor recommendations · written explanation requested</span>');
+      if(sel.gutters==='premium') f.push('<span class="f-warn">⚠ Xtreme $2,908 — most expensive of all (Banning $1,110 · AHC $1,920 · Augustine $2,025)</span>');
+      if(sel.epdm!=='skip') f.push('<span class="f-warn">⚠ Flat roof $7,800–$8,380 (range, not fixed) · higher than Augustine/Banning/Shane/Marshall</span>');
+      f.push('<span class="f-warn">⚠ More expensive than Augustine UHDZ for HDZ tier</span>');
+      f.push('<span class="f-warn">⚠ Highest decking rates ($110–152/sheet)</span>');
+      f.push('<span class="f-warn">⚠ Xavier verbal unreliable — written scope governs</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "shane", name: "Shane / Roofing & More", status: "active",
+    cred: "GAF ME only (Presidents Club NOT confirmed ⚠)", credBadge: "bg-red",
+    warns: ["Displaying unearned Presidents Club credential"],
+    financing: "1/3 deposit (cash) · NO deposit if financing · EnerBank: 12mo SAC ✓ true 0% (DAC2725) · 5yr@6.99% · 10yr@9.99% · apply: application.enerbank.com",
+    warranty: { premium: "25yr Golden Pledge", standard: "25yr Golden Pledge" },
+    wtyClass: { premium: "wty-great", standard: "wty-great" },
+    specs: {
+      drip: "ODE Complete/F5/F4 by tier",
+      boots: { lifetime: "GAF Pivot lifetime (Best/Better) · .032 aluminum flanges on Good (12-15yr) · I&W surround confirmed ✓", standard: "Good tier: .032 aluminum pipe flanges · 12-15yr lifespan (not Pivot lifetime) · I&W incl." },
+      bathvents: { replace: "750 hood vents · $82.70 each · total $248.09 for 3 ✓", skip: "-$248.09 credit if skipped" },
+      ridgevent: "GAF Snow Country Hidden Ridge · opening to 3\"",
+      iw: "Storm Guard (Best) · WeatherWatch (Better/Good)",
+      underlayment: "Deck Armor Premium (Best)",
+      boardrepair: "$14.95/board ft · 14LF incl. · CDX $100.74/sheet",
+      flatroof: "EPDM +$7,200 · TPO +$7,500 ★ recommended",
+      gutters2: "Leaf Relief (6\" · 10ft lengths · minimal joints) — $2,811.48",
+      soffits: "Boxed soffits (enclosed wood) — IntakePro recommended over soffit vents to avoid disturbing woodwork. Some areas (rear addition) already have soffit vents.",
+      intakepro_spec: "Correct install: I&W below IntakePro + IntakePro + I&W on top · CONFIRMED incl. in $2,108.51 price ✓",
+      gable_access: "One gable inaccessible from interior (cinder block wall) · Closed from exterior with white coil metal ✓ (prevents animal roosting)",
+      electrician: "Licensed electrician used for fan install (code compliant — some contractors do it themselves which is against code)",
+      windows: "Provia window quote available as add-on (forthcoming)",
+    },
+    base: { premium: 25590, standard: 23876 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet standard"}),
+      boots:    (v,s) => ({cost:0,note:"GAF Pivot + I&W incl. (Good tier: aluminum flanges 12-15yr)"}),
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"Bath vents incl. ($248.09 for 3)"}:{cost:-248,note:"-$248 credit if bath vents skipped"},
+      epdm:     (v,s) => ({skip:{cost:0},epdm:{cost:7200,note:"+$7,200 EPDM .060+thermal barrier"},tpo:{cost:7500,note:"+$7,500 TPO+tapered insulation ★"}})[v],
+      fan:      (v,s) => ({none:{cost:0},remove:{cost:300,note:"+$300 fan removal + close opening (materials+labor)"},replace:{cost:1390,note:"+$1,390 GAF Master Flow PR2D + licensed electrician + I&W surround + new shingles"}})[v],
+      gable:    (v,s) => v==='yes'?{cost:300,note:"+$300 gable blocking (materials+labor) · also incl. in IntakePro price"}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{cost:2109,note:"+$2,108.51 = $1,800 (81ft GAF Cobra IntakePro + I&W shield) + $300 gable blocking · fully confirmed ✓"},
+      gutters:  (v,s) => ({none:{cost:0},basic:{cost:2811,note:"+$2,811.48 Leaf Relief 6\" (lifetime \"never clean again\" guarantee) · incl. clean/re-align/tighten all gutters"},premium:{cost:2811,note:"+$2,811.48 Leaf Relief 6\" (Shane's only/premium option)"}})[v],
+      overlay:  (v,s) => v==='no'?{cost:0}:{na:true,reason:"Full overlay not in scope — damaged boards at $100.74/sheet CDX (as needed)"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-bad">⚠ Presidents Club NOT confirmed on gaf.com — credential misrepresentation</span>');
+      f.push('<span class="f-good">✓ Most thorough assessment · TPO option · GAF low slope certified · Licensed electrician for fan</span>');
+      f.push('<span class="f-good">✓ CompanyCam photo documentation before/during/after · Zero-defect inspection at completion</span>');
+      // Ventilation-specific commentary
+      if(sel.vents==='intake' && sel.fan==='replace') {
+        f.push('<span class="f-good">✓ Shane\'s recommended config: smart fan + IntakePro + ridge vent + gable blocking — optimal for VA climate</span>');
+      } else if(sel.vents==='intake' && sel.fan==='remove') {
+        f.push('<span class="f-warn">⚠ Shane recommends keeping fan as backup — customers often ask to reinstall after removal</span>');
+      } else if(sel.vents==='none' && sel.fan==='replace') {
+        f.push('<span class="f-warn">⚠ Shane says: without closing gables + adding intake, new fan intake won\'t function correctly — air pulls from gables not soffits</span>');
+      } else if(sel.vents==='none' && sel.fan==='none') {
+        f.push('<span class="f-warn">⚠ Current system (gables in + ridge out) is minimally functional per Shane — no dark nail rings confirms this · leaving as-is is defensible</span>');
+      } else if(sel.vents==='none' && sel.fan==='remove') {
+        f.push('<span class="f-warn">⚠ Shane advises against fan removal without adding intake — customers always ask to reinstall at additional cost</span>');
+      }
+      // Flat roof commentary
+      if(sel.epdm==='tpo') {
+        f.push('<span class="f-good">✓ TPO recommended by Shane: white/reflective · fiber reinforced · better for VA climate + tree coverage · $300 more than EPDM</span>');
+      } else if(sel.epdm==='epdm') {
+        f.push('<span class="f-warn">⚠ Shane recommends TPO over EPDM for this roof — only $300 more · better long-term value</span>');
+      } else if(sel.epdm==='skip') {
+        f.push('<span class="f-warn">⚠ Shane says flat roof may last 3–10 more years if maintained · doing concurrently saves $1,500–2,000 vs standalone</span>');
+      }
+      if(sel.gutters!=='none') {
+        f.push('<span class="f-good">✓ Leaf Relief: 6" lengths · minimal joints · lifetime "never clean again" guarantee · Shane backs warranty personally</span>');
+      }
+      if(sel.shingle==='standard') {
+        f.push('<span class="f-warn">⚠ Better tier (HDZ, $23,876) recommended over Good ($22,242): 6 vs 4 nails · GAF Pivot vs aluminum · proper ridge vent vs rolled · 25yr vs 10yr wty</span>');
+      }
+      f.push('<span class="f-good">✓ IntakePro confirmed: $1,800 (81ft+I&W) + $300 gable blocking = $2,108.51 ✓ · Fan remove-only=$300 · Smart fan=$1,390 ✓</span>');
+      f.push('<span class="f-good">✓ EnerBank 12mo SAC (true 0%) confirmed ✓ · co-op promo applied: Better -$1,244 · Good -$1,162 · Best -$329</span>');
+      f.push('<span class="f-warn">⚠ 1/3 deposit if cash · no deposit if financing · 3–4 week lead</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "nova", name: "Nova Rooftek", status: "active",
+    cred: "GAF + OC Platinum + CT SELECT + Haag", credBadge: "bg-gray",
+    warns: ["False 'GAF always leaks' tactic · 10-day pressure"],
+    financing: "Not specified",
+    warranty: { premium: "N/A", standard: "15yr labor" },
+    wtyClass: { premium: "wty-low", standard: "wty-low" },
+    specs: {
+      drip: "Not specified",
+      boots: { lifetime: "Lifetime pipe flashing + I&W ✓", standard: "Lifetime pipe flashing + I&W ✓" },
+      bathvents: { replace: "All bath vents replaced ✓ · $38/vent (req. due to age/rust/flashing damage)", skip: "Not recommended — warranty void on vents if not replaced · ~$114 savings only" },
+      ridgevent: "Included",
+      iw: "Included at penetrations",
+      underlayment: "Not specified",
+      boardrepair: "Rate not specified · damaged only",
+      flatroof: "Coating only (5yr bridge) · EPDM replace: N/A · TPO: N/A",
+      existing: "Note: partial soffit vents already present (added ~mid-2000s, rear addition only) · Tom says existing soffits should be left as-is (don't block) — but unvented sections may still benefit from added intake; awaiting updated recommendation",
+    },
+    base: { premium: null, standard: 18375 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet if needed ✓"}),
+      boots:    (v,s) => ({cost:0,note:"Lifetime boots + I&W incl."}),
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"Bath vents incl. · $38/vent · must replace (age/rust/flashing damage)"}:{cost:0,note:"Skip not recommended — vents not warranted if not replaced"},
+      epdm:     (v,s) => v==='skip'?{cost:0,note:"EPDM coating incl. (5yr bridge)"} : {na:true,reason:"Full EPDM/TPO replacement not available",fallback:0,fallbackNote:"EPDM coating (5yr bridge) already incl. in base — full replacement N/A"},
+      fan:      (v,s) => ({none:{cost:0},remove:{cost:0,note:"Fan removal + close decking incl."},replace:{na:true,reason:"Smart fan not offered",fallback:0,fallbackNote:"Fan removal incl. (no smart fan option)"}})[v],
+      gable:    (v,s) => v==='yes'?{cost:0,note:"Gable blocking incl. (if intake added)"}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{na:true,reason:"Intake vents: available but Tom says existing partial soffit coverage may be sufficient — awaiting updated rec for unvented sections"},
+      gutters:  (v,s) => ({cost:0,note:"Full gutter screen replacement already incl. in base price – brand TBD"}),
+      overlay:  (v,s) => v==='no'?{cost:0}:{na:true,reason:"Full overlay not in scope — damaged boards at market rate"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-bad">⚠ False sales tactics · 10-day quote pressure</span>');
+      f.push('<span class="f-warn">⚠ Mid-tier shingle · 15yr wty · EPDM coating is bridge only</span>');
+      f.push('<span class="f-good">✓ Gutter screens + fan removal + bath vents incl. in base price</span>');
+      if(sel.vents==='intake') f.push('<span class="f-warn">⚠ Intake vents: available but Tom says partial soffit vents (rear addition) may be sufficient · awaiting updated rec for unvented sections</span>');
+      f.push('<span class="f-warn">⚠ Bath vent skip not recommended — warranty void · only ~$114 savings</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "pond", name: "Pond Roofing", status: "active",
+    cred: "CT ShingleMaster PREMIER since 2003 · Since 1964", credBadge: "bg-blue",
+    warns: ["Eliminated on value — 2.7× Augustine"],
+    financing: "UPGRADE: 12mo no payment/interest · 5/10/15yr options · 30% deposit",
+    warranty: { premium: "30yr shingle / 5yr flat", standard: "30yr / 5yr flat" },
+    wtyClass: { premium: "wty-great", standard: "wty-great" },
+    specs: {
+      drip: "Included",
+      boots: { lifetime: "GAF Pivot / Lifetime Tool + I&W ✓", standard: "GAF Pivot / Lifetime Tool + I&W ✓" },
+      bathvents: { replace: "Broan kits · reconnected from roof (no electrician) ✓", skip: "Not replaced" },
+      ridgevent: "Included",
+      iw: "Included at all penetrations · I&W below AND above DCI Smart Vent confirmed ✓",
+      underlayment: "Included",
+      boardrepair: "$126–158/sheet CDX/FRT (highest rate of all)",
+      flatroof: "EPDM $9,978 · TPO +$9,978 (same price)",
+    },
+    base: { premium: 34721, standard: 34721 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet into masonry standard ✓"}),
+      boots:    (v,s) => ({cost:0,note:"GAF Pivot / Lifetime Tool incl."}),
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"Broan vents incl."}:{cost:0},
+      epdm:     (v,s) => ({skip:{cost:0},epdm:{cost:9978,note:"+$9,978 Firestone-Elevate EPDM"},tpo:{cost:9978,note:"+$9,978 TPO"}})[v],
+      fan:      (v,s) => ({none:{cost:0},remove:{cost:0,note:"Fan removal incl. ✓ (confirmed by Cameron)"},replace:{na:true,reason:"Smart fan not offered — DCI Smart Vent + ridge vent is Pond's recommended system",fallback:0,fallbackNote:"Fan removal incl. (no smart fan option)"}})[v],
+      gable:    (v,s) => v==='yes'?{cost:0,note:"Inaccessible gable: exterior closing confirmed ✓"}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{cost:0,note:"DCI Smart Vent incl. in base · I&W below AND above confirmed ✓"},
+      gutters:  (v,s) => ({none:{cost:0},basic:{cost:1652,note:"+$1,652 Bulldog Bronze incl. in base"},premium:{na:true,reason:"Xtreme micro-mesh not available from Pond",fallback:1652,fallbackNote:"+$1,652 Bulldog Bronze (Xtreme N/A — confirmed)"}})[v],
+      overlay:  (v,s) => v==='no'?{cost:0}:{cost:0,note:"Overlay incl. if gaps found"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-bad">⚠ Eliminated on value — 2.7× Augustine for mid-tier shingle</span>');
+      f.push('<span class="f-warn">⚠ 30% deposit · Highest decking rates ($126–158/sheet)</span>');
+      f.push('<span class="f-good">✓ Most comprehensive base scope · CT ShingleMaster PREMIER since 2003</span>');
+      f.push('<span class="f-good">✓ Inaccessible gable: exterior closing confirmed ✓</span>');
+      f.push('<span class="f-good">✓ DCI Smart Vent I&W: below AND above confirmed ✓</span>');
+      f.push('<span class="f-good">✓ FULLY RESOLVED — all questions answered ✓</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "marshall", name: "Marshall Roofing", status: "active",
+    cred: "CT ShingleMaster PREMIER · 6× Angi SSA · Top Checkbook 20yr · 4.9★/778", credBadge: "bg-blue",
+    warns: ["Landmark PRO free upgrade incl. (extended to end of month · $325 after that)"],
+    financing: "NO deposit · 18mo SAC true 0% (Wells Fargo) · 3% CC fee waived for cash/check · $300 veteran discount ✓ · Gutter Helmet detach/reset: $800 extra (Kenny)",
+    warranty: { premium: "10yr workmanship + 3-Star SureStart Plus (Landmark PRO incl. free)", standard: "10yr workmanship + 3-Star SureStart Plus" },
+    wtyClass: { premium: "wty-ok", standard: "wty-ok" },
+    specs: {
+      drip: "C 4.5\" drip edge",
+      boots: { lifetime: "Ultimate Lifetime Pipe Flashing (1.5\"+4\") + Easy Sleeve ✓", standard: "Ultimate Lifetime Pipe Flashing ✓ (same as lifetime — no standard option)" },
+      bathvents: { replace: "2× Broan vent kits + 2× 750 static vents ✓ incl.", skip: "Not replaced" },
+      ridgevent: "CertainTeed Shingle Vent II + Shadow Ridge hip/ridge",
+      iw: "WinterGuard — 2 ROWS at extended overhangs (more than code min) ✓ + chimney I&W",
+      underlayment: "CertainTeed RoofRunner synthetic + Stinger cap nails",
+      boardrepair: "CDX $95/sheet · 1x6 plank $6/LF · gutter linear footage = 102LF (same as intake vent footage)",
+      flatroof: "Flintlastic SA (mod. bitumen) $6,947.50 — Matt: 2-3× more durable than EPDM · 5yr wkmsn on membrane",
+    },
+    base: { premium: 16650, standard: 16650 },
+    // Note: $17,985.29 list - $1,034.94 cash discount = $16,950.35 · then -$300 veteran = $16,650.35 confirmed
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet + new black/brown aluminum flashing + I&W incl. ✓"}),
+      boots:    (v,s) => ({cost:0,note:"Ultimate Lifetime Pipe Flashing incl. (both sizes) ✓"}),
+      bathvents:(v,s) => v==='replace'?{cost:0,note:"2× Broan + 2× 750 static incl. (∼$60/each) ✓"}:{cost:-120,note:"-∼$120 credit if bath vents skipped (not recommended — Marshall always replaces)"},
+      epdm:     (v,s) => v==='skip'?{cost:0,note:"Flat roof excluded from base — separate Flintlastic option"}:v==='epdm'?{cost:6948,note:"+$6,948 Flintlastic SA (mod. bitumen — Matt: 2-3× more durable than EPDM ✓ best value flat roof option)"} : {na:true,reason:"TPO not offered — Flintlastic is equivalent/superior",fallback:6948,fallbackNote:"+$6,948 Flintlastic SA (TPO N/A — Flintlastic is 2-3× more durable · Matt recommends)"},
+      fan:      (v,s) => v==='none'?{na:true,reason:"Fan deletion is standard scope — leave as-is not offered",fallback:0,fallbackNote:"Fan deletion incl. (leave as-is not in scope)"}: v==='remove'?{cost:0,note:"Fan deleted + electrical capped incl. ✓"}:{na:true,reason:"Smart fan not offered — fan deletion is standard",fallback:0,fallbackNote:"Fan deletion incl. (smart fan not in scope)"},
+      gable:    (v,s) => v==='yes'?{cost:0,note:"Gable blocking incl. free with intake vent selection ✓ · inaccessible gable: pull roof board from above to access + block from interior (~$95 extra if not already pulling one in that area)"}:{cost:0},
+      vents:    (v,s) => v==='none'?{cost:0}:{cost:1530,note:"+$1,530 DCI Smart Vent (102LF) — most competitive intake price · ⚠ incompatible with Gutter Helmet — must switch to Leaf Relief or similar"},
+      gutters:  (v,s) => ({
+        none:{cost:0,note:"Gutter Helmet detach/reset: $800 (Kenny, $8/LF · excl. flat roof area)"},
+        basic:{cost:1224,note:"+$1,224 Leaf Relief (102LF · $12/LF) — exclusive Aluma-Perf technology · low profile"},
+        premium:{cost:2244,note:"+$2,244 Leaf Terminator (102LF · $22/LF) — patented design · 110mph wind certified · Matt has on his own house"}
+      })[v],
+      overlay:  (v,s) => v==='no'?{cost:0,note:"1x plank → 1x replacement confirmed · overlay not in scope"}:{na:true,reason:"Full overlay not offered — damaged boards only at $95/sheet CDX"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-good">✓ Landmark PRO (30yr StreakFighter, 250lbs) incl. FREE — normally +$650 · expires Sun 6/22</span>');
+      f.push('<span class="f-good">✓ Strongest independent track record (9.2 quality rating, 778 reviews)</span>');
+      f.push('<span class="f-good">✓ "Reshingling probably done to sell the house" (unprompted) — strong concealment evidence</span>');
+      f.push('<span class="f-good">✓ No deposit · 18mo interest-free Wells Fargo (confirmed 0% SAC) · 2 rows I&W at overhangs</span>');
+      f.push('<span class="f-good">✓ $300 veteran discount confirmed ✓ (applied on top of Landmark PRO free upgrade)</span>');
+      if(sel.epdm==='epdm') f.push('<span class="f-good">✓ Flintlastic $6,948 — cheaper than Augustine EPDM ($7,200) + more durable per Matt</span>');
+      f.push('<span class="f-warn">⚠ 10yr workmanship only — weakest of GAF/CT options besides Mancia</span>');
+      f.push('<span class="f-good">✓ DCI Smart Vent $1,530 (102LF) — most competitive intake price of all · free gable blocking incl.</span>');
+      f.push('<span class="f-good">✓ Gutter Helmet detach/reset $800 (Kenny) ✓ · Leaf Relief $12/LF · Leaf Terminator $22/LF</span>');
+      f.push('<span class="f-good">✓ Landmark PRO extended to end of month · $325 after that (half off)</span>');
+      if(sel.vents==='intake') f.push('<span class="f-warn">⚠ DCI Smart Vent incompatible with Gutter Helmet — must switch gutter protection if adding intake</span>');
+      f.push('<span class="f-good">✓ Leaf Relief $1,224 (102LF) · Leaf Terminator $2,244 (102LF) · fully confirmed ✓</span>');
+      f.push('<span class="f-good">✓ Cash price: $16,950.35 (after $1,034.94 discount from $17,985.29 list)</span>');
+      f.push('<span class="f-good">✓ Bath vents ∼$60/each — always replaced as standard · skip credit ∼$120</span>');
+      f.push('<span class="f-good">✓ Inaccessible gable: pull roof board from above to block from interior (~$95 extra sheet CDX) — gable still open to exterior so does need addressing</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "mancia", name: "Mancia Roofing", status: "active",
+    cred: "MHIC only — NO VA license confirmed ⚠", credBadge: "bg-red",
+    warns: ["No VA license — cannot legally work in Virginia"],
+    financing: "Acorn Finance ~$163/mo · 3% CC fee",
+    warranty: { premium: "N/A", standard: "10yr labor (weakest of all)" },
+    wtyClass: { premium: "wty-low", standard: "wty-low" },
+    specs: {
+      drip: "Painted aluminum",
+      boots: { lifetime: "N/A — painted galvanized only", standard: "Painted galvanized collars (not lifetime)" },
+      bathvents: { replace: "Not included", skip: "Not included" },
+      ridgevent: "CT ridge vent + Shadow Ridge",
+      iw: "Valleys, eaves, chimneys",
+      underlayment: "Synthetic",
+      boardrepair: "1x6 $7/ft · 1x8 $10/ft · CDX $90/sheet",
+      flatroof: "Not addressed — no site visit (GAP)",
+    },
+    base: { premium: null, standard: 13950 },
+    options: {
+      chimney:  (v,s) => ({cost:0,note:"Reglet counter flashing"}),
+      boots:    (v,s) => v==='lifetime'?{na:true,reason:"Lifetime boots not available — painted galvanized only",fallback:0,fallbackNote:"Painted galvanized collars (not lifetime)"}:{cost:0},
+      bathvents:(v,s) => v==='replace'?{na:true,reason:"Bath vents not included in scope",fallback:0,fallbackNote:"Bath vents not included — no replacement offered"}:{cost:0},
+      epdm:     (v,s) => v==='skip'?{cost:0}:{na:true,reason:"EPDM not addressed — no site visit · virtual quote only"},
+      fan:      (v,s) => v==='none'?{cost:0}:{na:true,reason:"Fan not addressed — no site visit · virtual quote only"},
+      gable:    (v,s) => ({cost:0}),
+      vents:    (v,s) => v==='none'?{cost:0}:{na:true,reason:"Not mentioned"},
+      gutters:  (v,s) => v==='none'?{cost:0,note:"Gutter clean incl."}:{na:true,reason:"Gutter screens not mentioned"},
+      overlay:  (v,s) => v==='no'?{cost:0}:{cost:0,note:"2 sheets incl. · $90/sheet beyond"},
+    },
+    flagsFn: (sel,calc) => {
+      const f=[];
+      f.push('<span class="f-bad">⚠ No VA license — cannot legally work at this address</span>');
+      f.push('<span class="f-bad">⚠ No site visit · Virtual quote only</span>');
+      f.push('<span class="f-warn">⚠ 10yr workmanship — weakest warranty of all</span>');
+      return f.join('<br>');
+    }
+  },
+  {
+    id: "atlas", name: "Atlas Roofing", status: "eliminated",
+    cred: "Not confirmed", credBadge: "bg-elim",
+    warns: ["Eliminated — under-measured · no warranty stated"],
+    financing: "N/A",
+    warranty: { premium: "None stated", standard: "None stated" },
+    wtyClass: { premium: "wty-low", standard: "wty-low" },
+    specs: { drip:"?",boots:{lifetime:"?",standard:"?"},bathvents:{replace:"?",skip:"?"},ridgevent:"?",iw:"?",underlayment:"?",boardrepair:"?",flatroof:"?" },
+    base: { premium: null, standard: 17280 },
+    options: {},
+    flagsFn: () => '<span class="f-bad">⚠ Under-measured (21.6 vs 24.77 sq) · No warranty — eliminated</span>'
+  }
+];
+
+// ─── CALCULATION ──────────────────────────────────────────────────────────────
+function getSel() {
+  const payEl = document.querySelector('input[name=payment]:checked');
+  const payment = payEl ? payEl.value : 'cash';
+  const fnote = document.getElementById('finance-note');
+  if(fnote) fnote.style.display = payment==='finance' ? 'inline' : 'none';
+  return {
+    payment,
+    shingle:   document.querySelector('input[name=shingle]:checked').value,
+    chimney:   document.querySelector('input[name=chimney]:checked').value,
+    boots:     document.querySelector('input[name=boots]:checked').value,
+    bathvents: document.querySelector('input[name=bathvents]:checked').value,
+    epdm:      document.querySelector('input[name=epdm]:checked').value,
+    fan:       document.querySelector('input[name=fan]:checked').value,
+    gable:     document.querySelector('input[name=gable]:checked').value,
+    vents:     document.querySelector('input[name=vents]:checked').value,
+    gutters:   document.querySelector('input[name=gutters]:checked').value,
+    overlay:   document.querySelector('input[name=overlay]:checked').value,
+  };
+}
+
+function calcContractor(c, sel) {
+  if (c.status === 'eliminated') return { type: 'eliminated' };
+  if (c.status === 'pending')    return { type: 'pending' };
+
+  const base = c.base[sel.shingle];
+  const shingleUnavailable = base === null;
+  const effectiveBase = shingleUnavailable ? (c.base.standard ?? c.base.premium) : base;
+  if (effectiveBase === null) return { type: 'na', reason: 'No pricing available' };
+
+  let total = effectiveBase;
+  const lines = [];
+  const warnings = [];
+  const naItems = [];
+  const payment = sel.payment || 'cash';
+  const financeRate = FINANCE_RATES[c.id];
+  const isFinanced = payment === 'finance';
+  const hasFinanceRate = financeRate !== null && financeRate !== undefined;
+
+  const optKeys = ["chimney","boots","bathvents","epdm","fan","gable","vents","gutters","overlay"];
+  for (const key of optKeys) {
+    if (!c.options || !c.options[key]) continue;
+    const res = c.options[key](sel[key], sel);
+    if (!res) continue;
+
+    if (res.na) {
+      if (res.fallback !== undefined) {
+        total += res.fallback;
+        lines.push(res.fallbackNote);
+        warnings.push(`${key}: ${res.reason}`);
+      } else {
+        naItems.push(res.reason);
+        warnings.push(`N/A — ${res.reason}`);
+      }
+    } else if (res.cost > 0) {
+      total += res.cost;
+      if (res.note) lines.push(res.note);
+    } else if (res.cost < 0) {
+      total += res.cost;
+      if (res.note) lines.push(res.note);
+    } else if (res.cost === 0 && res.note && (res.note.includes('✓') || res.note.includes('incl') || res.note.includes('bundled'))) {
+      // skip silent zero-cost items
+    }
+  }
+
+  let financedTotal = total;
+  let financeNote = null;
+  if (isFinanced) {
+    if (hasFinanceRate) {
+      financedTotal = Math.round(total * financeRate);
+      financeNote = `Cash: $${total.toLocaleString()} → Financed: $${financedTotal.toLocaleString()} (${(financeRate*100-100).toFixed(0)}% more)`;
+    } else {
+      financeNote = `Finance terms available but exact rate not yet confirmed — showing cash price`;
+    }
+  }
+
+  return {
+    type: 'price',
+    total: isFinanced && hasFinanceRate ? financedTotal : total,
+    cashTotal: total,
+    financedTotal: hasFinanceRate ? financedTotal : null,
+    financeNote,
+    lines, warnings, naItems, shingleUnavailable, effectiveBase,
+    isFinanced, hasFinanceRate
+  };
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function update() {
+  enforceLogic();
+  const sel = getSel();
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = "";
+
+  const results = C.map(c => ({ c, calc: calcContractor(c, sel) }));
+
+  const validPrices = results.filter(r => r.calc.type === 'price' && r.c.status !== 'eliminated').map(r => r.calc.total);
+  const lowest = validPrices.length ? Math.min(...validPrices) : null;
+
+  results.forEach(r => { r.score = scoreContractor(r.c, r.calc, sel, lowest); });
+  results.sort((a, b) => a.score - b.score);
+
+  let rankCounter = 1;
+  results.forEach(r => {
+    if (r.calc.type === 'price' && r.c.status !== 'eliminated') {
+      r.rank = rankCounter++;
+    } else {
+      r.rank = null;
+    }
+  });
+
+  results.forEach(({ c, calc, rank }) => {
+    const isWinner = rank === 1;
+    const isSecond = rank === 2;
+    const tr = document.createElement('tr');
+
+    if (c.status === 'eliminated') tr.className = 'eliminated-row';
+    else if (c.status === 'pending') tr.className = 'pending-row';
+    else if (calc.shingleUnavailable) tr.className = 'muted-row';
+    else if (isWinner) tr.className = 'winner';
+    else if (isSecond) tr.className = 'second';
+
+    const wtyText = c.warranty[sel.shingle];
+    const wtyClass = c.wtyClass[sel.shingle];
+    const bootSpec = (c.specs.boots && typeof c.specs.boots === 'object') ? c.specs.boots[sel.boots] : (c.specs.boots || '—');
+    const bathSpec = (c.specs.bathvents && typeof c.specs.bathvents === 'object') ? c.specs.bathvents[sel.bathvents] : (c.specs.bathvents || '—');
+
+    let rankBadge = '';
+    if (rank === 1) rankBadge = '<span class="rank-badge rank-1">1</span>';
+    else if (rank === 2) rankBadge = '<span class="rank-badge rank-2">2</span>';
+    else if (rank === 3) rankBadge = '<span class="rank-badge rank-3">3</span>';
+    else if (rank) rankBadge = `<span class="rank-badge rank-n">${rank}</span>`;
+
+    let priceHTML = '';
+    if (c.status === 'eliminated') {
+      priceHTML = `<div class="price-muted">Eliminated</div>`;
+    } else if (calc.type === 'pending') {
+      priceHTML = `<div class="price-pending-label">Quote pending</div>`;
+    } else if (calc.type === 'na') {
+      priceHTML = `<div class="price-na-label">No price available</div>`;
+    } else {
+      const priceClass = isWinner ? 'green' : isSecond ? 'blue' : '';
+      priceHTML = `<div class="price-big ${priceClass}">$${calc.total.toLocaleString()}</div>`;
+      if (isWinner) priceHTML += `<div style="margin-top:3px"><span class="badge bg-winner">★ BEST</span></div>`;
+      if (calc.isFinanced && calc.hasFinanceRate && calc.cashTotal) {
+        priceHTML += `<div class="price-note" style="color:#065f46">Cash price: $${calc.cashTotal.toLocaleString()}</div>`;
+      } else if (calc.isFinanced && !calc.hasFinanceRate) {
+        priceHTML += `<div class="price-note">Finance rate TBD — showing cash price</div>`;
+      } else if (!calc.isFinanced && calc.financedTotal) {
+        priceHTML += `<div class="price-note">Financed: ~$${calc.financedTotal.toLocaleString()}</div>`;
+      }
+      if (calc.shingleUnavailable) {
+        priceHTML += `<div class="price-note">⚠ Shown as ${sel.shingle==='premium'?'standard':'premium'} (${sel.shingle} not available)</div>`;
+      }
+      if (calc.lines.length) priceHTML += `<div class="price-detail">${calc.lines.join('<br>')}</div>`;
+      if (calc.warnings.length) priceHTML += `<div class="price-warning">${calc.warnings.slice(0,3).join('<br>')}</div>`;
+    }
+
+    tr.innerHTML = `
+      <td>
+        <div class="cname">${rankBadge}${c.name}</div>
+        <div class="csub"><span class="badge ${c.credBadge}">${c.cred}</span></div>
+        ${c.warns.map(w=>`<div class="cwarn">⚠ ${w}</div>`).join('')}
+      </td>
+      <td class="price-cell">${priceHTML}</td>
+      <td><span class="wty ${wtyClass}">${wtyText}</span></td>
+      <td class="spec-cell">${bootSpec||'—'}</td>
+      <td class="spec-cell">${bathSpec||'—'}</td>
+      <td class="spec-cell">${c.specs.iw||'—'}</td>
+      <td class="spec-cell">${c.specs.drip||'—'}</td>
+      <td class="spec-cell">${c.specs.ridgevent||'—'}</td>
+      <td class="spec-cell">${c.specs.underlayment||'—'}</td>
+      <td class="spec-cell">${c.specs.boardrepair||'—'}</td>
+      <td class="spec-cell">${c.specs.flatroof||'—'}</td>
+      <td class="fin-cell">${c.financing||'—'}</td>
+      <td class="flags-cell">${c.flagsFn ? c.flagsFn(sel, calc) : ''}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const best = results.find(r => r.rank === 1);
+  const second = results.find(r => r.rank === 2);
+  if (best && best.calc.type === 'price') {
+    document.getElementById('rec-name').textContent = best.c.name;
+    const savings = second && second.calc.type === 'price' ? second.calc.total - best.calc.total : 0;
+    let reason = `At $${best.calc.total.toLocaleString()}, offers the best value for your configuration`;
+    if (savings > 0) reason += ` — saving $${savings.toLocaleString()} vs. ${second.c.name} ($${second.calc.total.toLocaleString()})`;
+    reason += '.';
+    if (best.c.id === 'augustine') reason += ' GAF Presidents Club confirmed · 30yr Golden Pledge · No deposit or CC fee.';
+    else if (best.c.id === 'ahc') reason += ' GAF Presidents Club confirmed · 30yr warranty.';
+    document.getElementById('rec-reason').textContent = reason;
+  } else {
+    document.getElementById('rec-name').textContent = '—';
+    document.getElementById('rec-reason').textContent = 'Adjust selections above.';
+  }
+}
+
+update();
+</script>
+</body>
+</html>
