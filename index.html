@@ -13,6 +13,15 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .header p { font-size: 11px; color: #8899bb; margin-top: 3px; }
 
 .config { background: white; border-bottom: 2px solid #e2e6ea; padding: 16px 24px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+@media (max-width: 768px) {
+  .config { position: relative; }
+  .config-grid { display: none; }
+  .config-grid.mobile-open { display: grid; }
+  .rec-bar { margin: 8px 12px 0; flex-direction: column; gap: 6px; }
+  .scroll { padding: 8px 0 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .header { padding: 12px 16px 10px; }
+  .header h1 { font-size: 14px; }
+}
 .config-title { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #556; margin-bottom: 14px; }
 .config-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px 20px; }
 .opt-group { display: flex; flex-direction: column; gap: 5px; }
@@ -97,6 +106,33 @@ td { padding: 9px 7px; vertical-align: top; font-size: 10px; }
 .f-bad { color: #dc2626; }
 
 .fin-cell { font-size: 9px; color: #445; line-height: 1.6; }
+/* Mobile card layout */
+.mobile-cards { display: none; padding: 8px 12px 20px; }
+@media (max-width: 768px) {
+  .scroll table { display: none; }
+  .mobile-cards { display: block; }
+}
+.mcard {
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  border-left: 4px solid #e2e6ea;
+}
+.mcard.mc-winner { border-left-color: #10b981; background: #f0fdf4; }
+.mcard.mc-second { border-left-color: #3b82f6; background: #f8faff; }
+.mcard.mc-elim { opacity: 0.45; border-left-color: #e5e7eb; }
+.mcard.mc-pending { border-left-color: #f59e0b; background: #fffbf0; }
+.mc-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.mc-name { font-size: 14px; font-weight: 800; color: #1a1a2e; }
+.mc-price { font-size: 18px; font-weight: 800; text-align: right; }
+.mc-price.green { color: #059669; }
+.mc-price.blue { color: #2563eb; }
+.mc-wty { font-size: 10px; margin-top: 2px; }
+.mc-flags { font-size: 10px; line-height: 1.7; margin-top: 6px; border-top: 1px solid #f0f2f5; padding-top: 6px; }
+.mc-details { font-size: 10px; color: #556; line-height: 1.6; margin-top: 4px; }
+.mc-badge { display: inline-block; font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 10px; margin-right: 4px; }
 </style>
 </head>
 <body>
@@ -104,12 +140,15 @@ td { padding: 9px 7px; vertical-align: top; font-size: 10px; }
 <div class="header">
   <h1>Roof Contractor Comparison — 6225 Cheryl Drive</h1>
   <p>Configure your specs below. Incompatible combinations are auto-locked. Contractors sorted by recommendation score.</p>
-  <p style="margin-top:6px;font-size:10.5px;color:#ffcc88">⚠ Outstanding for remaining contractors: (1) Intake vent I&W spec — installed BELOW and ABOVE the intake vent, or just below? (2) Inaccessible gable (cinder block wall) — how would they handle it? (Augustine: $165/each from roof ✓ · Shane: outside coil metal ✓ · Pond: exterior closing ✓)</p>
+  <p style="margin-top:6px;font-size:10.5px;color:#ffcc88">⚠ Still pending: Shane — veteran discount + Presidents Club credential verification · Augustine — financed total for full config (Plan 4248) · Exterior Medics — intake vent written explanation · Nova — intake vent rec for unvented sections</p>
 </div>
 
 <div class="config">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px;">
-    <div class="config-title" style="margin-bottom:0">Your Specifications</div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div class="config-title" style="margin-bottom:0">Your Specifications</div>
+      <button id="mobile-toggle" onclick="toggleConfig()" style="display:none;padding:4px 10px;border:1.5px solid #1a1a2e;border-radius:12px;background:white;color:#1a1a2e;font-size:10px;font-weight:700;cursor:pointer;">▼ Show</button>
+    </div>
     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <div style="display:flex;align-items:center;gap:10px;background:#f8f9fa;padding:6px 12px;border-radius:20px;border:1.5px solid #d0d7de;">
         <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#445">Payment:</span>
@@ -271,6 +310,7 @@ td { padding: 9px 7px; vertical-align: top; font-size: 10px; }
 <tbody id="tbody"></tbody>
 </table>
 </div>
+<div class="mobile-cards" id="mobile-cards"></div>
 
 <script>
 // ─── RESET DEFAULTS ──────────────────────────────────────────────────────────
@@ -355,25 +395,36 @@ function scoreContractor(c, calc, sel, lowestPrice) {
   if (calc.type !== 'price') return 9999;
   if (c.status === 'eliminated') return 9998;
 
+  // DISQUALIFYING — push to bottom regardless of price
+  if (c.id === 'mancia') return 950;  // No VA license
+  if (c.id === 'nova') return 900;    // False sales tactics, mid-tier only, EPDM coating only
+  if (c.id === 'atlas') return 980;   // Eliminated
+  if (c.id === 'pond') return 800;    // Eliminated on value (2.7x Augustine)
+
   let score = 0;
+
+  // Price gap from lowest (primary driver)
   const priceGap = calc.total - lowestPrice;
-  score += Math.min(50, (priceGap / 1000) * 5);
+  score += Math.min(60, (priceGap / 1000) * 6);
 
-  if (c.id === 'shane') score += 15;
-  if (c.id === 'mancia') score += 40;
-  if (c.id === 'atlas' || c.id === 'pond') score += 30;
-  if (c.id === 'nova') score += 12;
-  if (c.id === 'exteriormedics') score += 8;
-  if (c.id === 'marshall') score += 5;
+  // Credential concerns
+  if (c.id === 'shane') score += 12;        // Presidents Club not verified
+  if (c.id === 'exteriormedics') score += 10; // Higher prices, Xavier unreliable, intake vent dispute
 
+  // Warranty penalty
   const wty = c.warranty[sel.shingle] || '';
-  if (wty.includes('15yr') || wty.includes('10yr')) score += 10;
+  if (wty.includes('10yr') && !wty.includes('30yr')) score += 12;
+  if (wty.includes('15yr') && !wty.includes('30yr')) score += 8;
   if (wty.includes('N/A') || wty.includes('None') || wty.includes('TBD')) score += 5;
 
-  if (calc.naItems && calc.naItems.length > 0) score += calc.naItems.length * 3;
+  // NA items penalty (missing pricing options)
+  if (calc.naItems && calc.naItems.length > 0) score += calc.naItems.length * 2;
 
-  if (c.id === 'augustine' || c.id === 'ahc') score -= 5;
-  if (c.id === 'augustine') score -= 3;
+  // AHC: no true SAC, arbitration clause, WV venue, I&W discrepancy
+  if (c.id === 'ahc') score += 8;
+
+  // Augustine bonus: confirmed Presidents Club, best warranty, no deposit/fee
+  if (c.id === 'augustine') score -= 8;
 
   if (c.status === 'pending') return 500 + score;
 
@@ -905,6 +956,26 @@ function calcContractor(c, sel) {
   };
 }
 
+// ─── MOBILE TOGGLE ────────────────────────────────────────────────────────────
+function toggleConfig() {
+  const grid = document.querySelector('.config-grid');
+  const btn = document.getElementById('mobile-toggle');
+  if (grid.classList.contains('mobile-open')) {
+    grid.classList.remove('mobile-open');
+    btn.textContent = '▼ Show';
+  } else {
+    grid.classList.add('mobile-open');
+    btn.textContent = '▲ Hide';
+  }
+}
+
+function initMobile() {
+  if (window.innerWidth <= 768) {
+    const btn = document.getElementById('mobile-toggle');
+    if (btn) btn.style.display = 'inline-block';
+  }
+}
+
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 function update() {
   enforceLogic();
@@ -1013,9 +1084,59 @@ function update() {
     document.getElementById('rec-name').textContent = '—';
     document.getElementById('rec-reason').textContent = 'Adjust selections above.';
   }
+
+  // Render mobile cards
+  const mobileCards = document.getElementById('mobile-cards');
+  if (mobileCards) {
+    mobileCards.innerHTML = results.map(({c, calc, rank}) => {
+      let cardClass = 'mcard';
+      if (c.status === 'eliminated') cardClass += ' mc-elim';
+      else if (c.status === 'pending') cardClass += ' mc-pending';
+      else if (rank === 1) cardClass += ' mc-winner';
+      else if (rank === 2) cardClass += ' mc-second';
+
+      let priceStr = '';
+      let priceClass = rank === 1 ? 'green' : rank === 2 ? 'blue' : '';
+      if (calc.type === 'price') {
+        priceStr = `$${calc.total.toLocaleString()}`;
+        if (calc.isFinanced && calc.hasFinanceRate && calc.cashTotal) {
+          priceStr += `<div style="font-size:9px;color:#065f46">Cash: $${calc.cashTotal.toLocaleString()}</div>`;
+        }
+      } else if (calc.type === 'eliminated') {
+        priceStr = '<span style="color:#9ca3af;font-size:12px">Eliminated</span>';
+      } else {
+        priceStr = '<span style="color:#d97706;font-size:11px">Pending</span>';
+      }
+
+      const rankBadge = rank ? `<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;font-size:9px;font-weight:800;background:${rank===1?'#10b981':rank===2?'#3b82f6':rank===3?'#8b5cf6':'#e5e7eb'};color:${rank<=3?'white':'#6b7280'};margin-right:5px">${rank}</span>` : '';
+
+      const wty = c.warranty[sel.shingle] || '';
+      const wtyClass = c.wtyClass[sel.shingle] || '';
+      const flags = c.flagsFn ? c.flagsFn(sel, calc) : '';
+
+      return `<div class="${cardClass}">
+        <div class="mc-header">
+          <div>
+            <div class="mc-name">${rankBadge}${c.name}</div>
+            <div style="margin-top:3px"><span class="mc-badge ${c.credBadge}" style="font-size:8px">${c.cred}</span></div>
+            ${c.warns.map(w=>`<div style="font-size:9px;color:#dc2626;font-weight:600">⚠ ${w}</div>`).join('')}
+          </div>
+          <div>
+            <div class="mc-price ${priceClass}">${priceStr}</div>
+            <div class="mc-wty wty ${wtyClass}" style="text-align:right">${wty}</div>
+          </div>
+        </div>
+        <div class="mc-details">${c.financing||''}</div>
+        ${flags ? `<div class="mc-flags">${flags}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
 }
 
+window.addEventListener('resize', initMobile);
+
 update();
+initMobile();
 </script>
 </body>
 </html>
