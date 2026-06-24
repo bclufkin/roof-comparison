@@ -391,44 +391,65 @@ const FINANCE_RATES = {
 };
 
 // ─── SCORING ──────────────────────────────────────────────────────────────────
+// ─── WEIGHTED SCORING ─────────────────────────────────────────────────────────
+// Weights (lower score = better rank):
+// Price:        50%  — normalized gap from cheapest
+// Warranty:     20%  — 30yr GP=0, 25yr GP=4, 15yr=10, 10yr=16, N/A=20
+// Credentials:  15%  — Presidents Club confirmed=0, ME only=5, CT ShingMstr=8, unverified=12
+// Financing:     3%  — true SAC=0, deferred=2, none=4
+// Reputation:    3%  — strong independent=0, moderate=2, weak/none=4
+// Contract:      3%  — no deposit/no CC fee/no arb=0, some issues=3, major issues=6
+// Completeness:  3%  — 0 NA items=0, each NA item=1 (max 6)
+// Expertise:     3%  — proactive/thorough=0, standard=2, unreliable/pushy=5
+
+const CONTRACTOR_SCORES = {
+  // [warranty, credentials, financing, reputation, contract, expertise, floor_penalty]
+  // floor_penalty: added regardless of price to push problematic contractors down
+  augustine:     [0,   0,   2,  2,  0,  0,  0],   // 30yr GP · PC confirmed · deferred adds fee · good · no dep/no CC · thorough
+  ahc:           [0,   0,   4,  2,  6,  2,  0],   // 30yr GP · PC confirmed · deferred only · good · arb+WV+$100dep · standard
+  banning:       [8,   8,   0,  3,  2,  2,  0],   // 15yr · CT ShingleMstr · Enhancify 0% likely · long track record · 1/3 dep · standard
+  exteriormedics:[0,   5,   4,  3,  2,  5,  8],   // intake vent position disputes all others · Xavier verbal unreliable
+  shane:         [0,   12,  0,  3,  3,  0,  0],   // 25yr GP · PC NOT verified (misrepresentation) · 12mo SAC · thorough
+  nova:          [10,  5,   4,  4,  4,  5,  20],  // false sales tactics · 10-day pressure · mid-tier only · EPDM coating only
+  pond:          [0,   8,   4,  2,  3,  2,  15],  // eliminated on value (2.7x Augustine) · 30% deposit
+  marshall:      [12,  8,   0,  0,  0,  1,  0],   // 10yr only · CT ShingleMstr · 18mo SAC · BEST independent reviews · no dep
+  mancia:        [16,  12,  4,  5,  5,  5,  30],  // no VA license · virtual quote only · weakest warranty
+  atlas:         [20,  12,  4,  5,  5,  5,  35],  // no warranty · under-measured · eliminated
+};
+
 function scoreContractor(c, calc, sel, lowestPrice) {
   if (calc.type !== 'price') return 9999;
-  if (c.status === 'eliminated') return 9998;
 
-  // DISQUALIFYING — push to bottom regardless of price
-  if (c.id === 'mancia') return 950;  // No VA license
-  if (c.id === 'nova') return 900;    // False sales tactics, mid-tier only, EPDM coating only
-  if (c.id === 'atlas') return 980;   // Eliminated
-  if (c.id === 'pond') return 800;    // Eliminated on value (2.7x Augustine)
+  const scores = CONTRACTOR_SCORES[c.id] || [10, 10, 4, 4, 4, 4, 10];
+  const [wtyScore, credScore, finScore, repScore, contractScore, expertScore, floorPenalty] = scores;
 
-  let score = 0;
-
-  // Price gap from lowest (primary driver)
+  // PRICE: 50 points max — normalized gap from cheapest
+  // $0 gap = 0 pts, every $1000 = 2 pts, max 50
   const priceGap = calc.total - lowestPrice;
-  score += Math.min(60, (priceGap / 1000) * 6);
+  const priceScore = Math.min(50, (priceGap / 1000) * 2);
 
-  // Credential concerns
-  if (c.id === 'shane') score += 12;        // Presidents Club not verified
-  if (c.id === 'exteriormedics') score += 10; // Higher prices, Xavier unreliable, intake vent dispute
+  // WARRANTY: 20 points max — scaled from static score (max raw = 20)
+  const warrantyScore = (wtyScore / 20) * 20;
 
-  // Warranty penalty
-  const wty = c.warranty[sel.shingle] || '';
-  if (wty.includes('10yr') && !wty.includes('30yr')) score += 12;
-  if (wty.includes('15yr') && !wty.includes('30yr')) score += 8;
-  if (wty.includes('N/A') || wty.includes('None') || wty.includes('TBD')) score += 5;
+  // CREDENTIALS: 15 points max — scaled from static score (max raw = 12)
+  const credentialScore = (credScore / 12) * 15;
 
-  // NA items penalty (missing pricing options)
-  if (calc.naItems && calc.naItems.length > 0) score += calc.naItems.length * 2;
+  // REMAINING 15%: financing(3) + reputation(3) + contract(3) + completeness(3) + expertise(3)
+  const naCount = calc.naItems ? calc.naItems.length : 0;
+  const completenessScore = Math.min(3, naCount * 0.75);
 
-  // AHC: no true SAC, arbitration clause, WV venue, I&W discrepancy
-  if (c.id === 'ahc') score += 8;
+  const financingScore = (finScore / 4) * 3;
+  const reputationScore = (repScore / 5) * 3;
+  const contractScore2 = (contractScore / 6) * 3;
+  const expertiseScore = (expertScore / 5) * 3;
 
-  // Augustine bonus: confirmed Presidents Club, best warranty, no deposit/fee
-  if (c.id === 'augustine') score -= 8;
+  const total = priceScore + warrantyScore + credentialScore +
+                financingScore + reputationScore + contractScore2 +
+                completenessScore + expertiseScore + floorPenalty;
 
-  if (c.status === 'pending') return 500 + score;
+  if (c.status === 'pending') return 500 + total;
 
-  return score;
+  return total;
 }
 
 // ─── CONTRACTOR DATA ──────────────────────────────────────────────────────────
