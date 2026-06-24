@@ -434,18 +434,44 @@ function scoreContractor(c, calc, sel, lowestPrice) {
   // CREDENTIALS: 15 points max — scaled from static score (max raw = 12)
   const credentialScore = (credScore / 12) * 15;
 
-  // REMAINING 15%: financing(3) + reputation(3) + contract(3) + completeness(3) + expertise(3)
-  const naCount = calc.naItems ? calc.naItems.length : 0;
-  const completenessScore = Math.min(3, naCount * 0.75);
-
+  // REMAINING 15%: financing(3) + reputation(3) + contract(3) + expertise(3) + weighted NA penalty
   const financingScore = (finScore / 4) * 3;
   const reputationScore = (repScore / 5) * 3;
   const contractScore2 = (contractScore / 6) * 3;
   const expertiseScore = (expertScore / 5) * 3;
 
+  // WEIGHTED NA PENALTY — reflects value-for-money
+  // Each NA item penalizes based on how important/expensive that option is
+  // This ensures a cheap price that excludes key items doesn't score well
+  const NA_WEIGHTS = {
+    epdm: 15,     // flat roof replacement is a major cost item
+    vents: 10,    // intake ventilation — key system component
+    gutters: 5,   // premium gutter screens
+    fan: 4,       // smart fan replacement
+    gable: 3,     // gable blocking
+    boots: 3,     // lifetime pipe boots
+    bathvents: 2, // bath vent replacement
+    overlay: 1,   // plywood overlay
+    chimney: 1,   // chimney flashing upgrade
+  };
+
+  let weightedNaPenalty = 0;
+  const optKeys2 = ["chimney","boots","bathvents","epdm","fan","gable","vents","gutters","overlay"];
+  for (const key of optKeys2) {
+    if (!c.options || !c.options[key]) continue;
+    const res = c.options[key](sel[key], sel);
+    if (res && res.na && res.fallback === undefined) {
+      // True NA with no fallback — penalize by item weight
+      weightedNaPenalty += (NA_WEIGHTS[key] || 2);
+    } else if (res && res.na && res.fallback !== undefined) {
+      // Has fallback but not the selected option — half penalty
+      weightedNaPenalty += (NA_WEIGHTS[key] || 2) * 0.5;
+    }
+  }
+
   const total = priceScore + warrantyScore + credentialScore +
                 financingScore + reputationScore + contractScore2 +
-                completenessScore + expertiseScore + floorPenalty;
+                expertiseScore + weightedNaPenalty + floorPenalty;
 
   if (c.status === 'pending') return 500 + total;
 
