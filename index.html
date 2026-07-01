@@ -140,7 +140,7 @@ td { padding: 9px 7px; vertical-align: top; font-size: 10px; }
 <div class="header">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:6px;">
     <h1>Roof Contractor Comparison — 6225 Cheryl Drive</h1>
-    <span style="font-size:10px;font-weight:700;background:#2d3a5a;color:#8899cc;padding:3px 9px;border-radius:10px;white-space:nowrap;letter-spacing:0.05em">v1.1</span>
+    <span style="font-size:10px;font-weight:700;background:#2d3a5a;color:#8899cc;padding:3px 9px;border-radius:10px;white-space:nowrap;letter-spacing:0.05em">v1.2</span>
   </div>
   <p>Configure your specs below. Incompatible combinations are auto-locked. Contractors sorted by weighted score.</p>
   <p style="margin-top:6px;font-size:10.5px;color:#ffcc88">⚠ Still pending: Shane — veteran discount + Presidents Club credential verification · Augustine — financed total for full config (Plan 4248) · Exterior Medics — intake vent written explanation · Nova — intake vent rec for unvented sections</p>
@@ -487,7 +487,7 @@ const C = [
     id: "augustine", name: "Augustine", status: "active",
     cred: "GAF ME + Presidents Club ✓", credBadge: "bg-gold",
     warns: [],
-    financing: "No deposit · No CC fee · GreenSky: 24mo deferred interest (Plan 4248) best option · adds fee to base price · NO true SAC · $150 veteran/first responder discount ✓ · financed total for full config pending Johnny",
+    financing: "No deposit ✓ confirmed in writing · No CC fee ✓ confirmed in writing (prefers check but won't charge CC fee) · Use outside 0% card to earn ~$1,100-1,900 HYSA interest · GreenSky available (adds fee, not recommended) · $150 veteran discount ✓",
     warranty: { premium: "30yr Golden Pledge", standard: "25yr Golden Pledge" },
     wtyClass: { premium: "wty-great", standard: "wty-great" },
     specs: {
@@ -515,9 +515,9 @@ const C = [
     flagsFn: (sel,calc) => {
       const f=[];
       f.push('<span class="f-good">✓ Presidents Club ✓ · No deposit/CC fee · QC inspection · 30yr Golden Pledge on UHDZ</span>');
-      f.push('<span class="f-good">✓ $150 veteran/first responder discount · No deposit · No CC fee ✓</span>');
-      f.push('<span class="f-warn">⚠ No true 0% SAC financing — GreenSky deferred interest adds fee to base · best to pay cash or use outside 0% card</span>');
-      f.push('<span class="f-warn">⚠ Financed total for full config pending Johnny response</span>');
+      f.push('<span class="f-good">✓ $150 veteran discount · No deposit ✓ · No CC fee ✓ (both confirmed in writing by Johnny)</span>');
+      f.push('<span class="f-good">✓ Use outside 0% APR card (e.g. US Bank Shield 24mo) · earn ~$1,100-1,900 HYSA interest · no fee offset</span>');
+      f.push('<span class="f-warn">⚠ GreenSky in-house financing adds ~$3,564 fee — not recommended</span>');
       if(sel.epdm==='tpo') f.push('<span class="f-good">✓ TPO at same price as EPDM ($7,200) — best value TPO of all contractors ★</span>');
       if(sel.vents==='intake') f.push('<span class="f-good">✓ IntakePro $2,885 already priced for unvented sections · I&W below+above confirmed ✓</span>');
       if(sel.vents==='intake') f.push('<span class="f-warn">⚠ IntakePro $2,885 + $330 gable = $3,215 total vs Shane $2,109 all-in</span>');
